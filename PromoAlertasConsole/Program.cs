@@ -17,22 +17,28 @@ namespace PromoAlertasConsole
         {
             Console.WriteLine("Start Program.");
 
-            Task<List<Post>> task = GetData();
-            List<Post> post = task.Result;
-            Console.WriteLine("Return Data.");
+            int hour = DateTime.Now.Hour;
+            Console.WriteLine("Hour: " + hour);
 
-            List<Post> post_selected = SelectPosts(post);
-
-            if (post_selected.Count > 0)
+            if (hour >= 12 || hour <= 4)
             {
-                Task<PostmarkResponse> task_email = SendEmail(post_selected);
-                PostmarkResponse response = task_email.Result;
+                Task<List<Post>> task = GetData();
+                List<Post> post = task.Result;
+                Console.WriteLine("Return Data.");
 
-                if (response != null && response.ErrorCode == 0)
-                    Console.WriteLine("Email Sent.");
-                else
-                    Console.WriteLine("Email Error.");
-            }
+                List<Post> post_selected = SelectPosts(post);
+
+                if (post_selected.Count > 0)
+                {
+                    Task<PostmarkResponse> task_email = SendEmail(post_selected);
+                    PostmarkResponse response = task_email.Result;
+
+                    if (response != null && response.ErrorCode == 0)
+                        Console.WriteLine("Email Sent.");
+                    else
+                        Console.WriteLine("Email Error.");
+                }
+            }            
 
             Console.WriteLine("End Program.");
         }
